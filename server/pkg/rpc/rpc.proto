@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package rpc;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service KobService {
+
+    rpc ListEntries(ListEntriesRequest) returns (EntryList) {
+        option (google.api.http) = {
+            get: "/entry"
+        };
+    }
+
+    rpc GetEntry(GetEntryRequest) returns (Entry) {
+        option (google.api.http) = {
+            get: "/entry/{id}"
+        };
+    }
+
+    rpc CreateEntry(CreateEntryRequest) returns (Entry) {
+        option (google.api.http) = {
+            post: "/entry"
+        };
+    }
+
+    rpc UpdateEntry(UpdateEntryRequest) returns (Entry) {
+        option (google.api.http) = {
+            put: "/entry/{id}"
+        };
+    }
+
+    rpc ListEntryComments(ListEntryCommentsRequest) returns (CommentList) {
+        option (google.api.http) = {
+            get: "/entry/{entry_id}/comment"
+        };
+    }
+
+    rpc CreateEntryComment(CreateEntryCommentRequest) returns (Comment) {
+        option (google.api.http) = {
+            post: "/entry/{entry_id}/comment"
+        };
+    }
+
+    rpc UpdateEntryComment(UpdateEntryCommentRequest) returns (Comment) {
+        option (google.api.http) = {
+            put: "/entry/{entry_id}/comment/{id}"
+        };
+    }
+
+    rpc CreateJWT(google.protobuf.Empty) returns (JWT) {
+        option (google.api.http) = {
+            get: "/auth/token"
+        };
+    }
+
+    rpc CreateAuthURL(google.protobuf.Empty) returns (AuthURL) {
+        option (google.api.http) = {
+            get: "/auth/url"
+        };
+    }
+}
+
+message ListEntriesRequest {
+    int64 page = 1;
+    int64 num_per_page = 2;
+    string keyword = 3;
+}
+
+message GetEntryRequest {
+    string id = 1;
+}
+
+message CreateEntryRequest {
+    string title = 2;
+    string content = 3;
+    string author_id = 4;
+    repeated string tag_ids = 5;
+}
+
+message UpdateEntryRequest {
+    string id = 1;
+    string title = 2;
+    string content = 3;
+    string author_id = 4;
+    repeated string tag_ids = 5;
+}
+
+message EntryList {
+    repeated Entry entries = 1;
+    int64 num_results  = 2;
+}
+
+message ListEntryCommentsRequest {
+    string entry_id = 1;
+}
+
+message CommentList {
+    repeated Comment comments = 1;
+}
+
+message Entry {
+    string id = 1;
+    string title = 2;
+    string content = 3;
+    Author author = 4;
+    repeated Tag tags = 5;
+    string created_date = 6;
+    string updated_date = 7;
+}
+
+message Author {
+    string id = 1;
+    string email = 2;
+}
+
+message CreateEntryCommentRequest {
+    string entry_id = 1;
+    string author_id = 2;
+    string content = 3;
+}
+
+message UpdateEntryCommentRequest {
+    string entry_id = 1;
+    string id = 2;
+    string content = 3;
+}
+
+message Comment {
+    string id = 1;
+    Author author = 2;
+    string created_date = 3;
+    string content = 4; 
+}
+
+message Tag {
+    string id = 1;
+    string label = 2;
+}
+
+message JWT {
+    string code = 1;
+}
+
+message AuthURL {
+    string url = 1;
+}

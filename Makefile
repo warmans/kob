@@ -11,10 +11,15 @@ dev:
 
 .PHONY: generate
 generate:
-	go generate `go list ./server/rpc`
+	go generate `go list ./server/pkg/rpc`
+	#cd ui; node_modules/.bin/a4apigen -s src/assets/rpc.swagger.json -o src/app/service/api-client
 
 .PHONY: build-server
 build-server:
 	GO15VENDOREXPERIMENT=1 \
 	GOOS=linux \
 	go build -ldflags "-X github.com/warmans/kob/cmd/kob-server/main.Version=$(PROJECT_VERSION)" -o build/bin/kob-server ./server/cmd/kob-server
+
+.PHONY: run-ui
+run-ui:
+	cd ui; node_modules/.bin/ng serve 

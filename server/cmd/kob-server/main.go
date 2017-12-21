@@ -4,12 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"net"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/warmans/kob/server/pkg/rpc/server"
+
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/warmans/kob/server/rpc"
-	"github.com/warmans/kob/server/rpc/service"
+	"github.com/warmans/kob/server/pkg/rpc"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -39,17 +40,10 @@ func main() {
 }
 
 func serveGRPC(logger *zap.Logger) {
-	grpcServer := grpc.NewServer()
-	rpc.RegisterKobServiceServer(grpcServer, service.NewKobService())
 
-	bind := fmt.Sprintf("%s:%d", *bindAddr, *grpcPort)
-	conn, err := net.Listen("tcp", bind)
-	if err != nil {
-		logger.Fatal("gRPC Failed", zap.Error(err))
-	}
-
-	logger.Info("Starting GRPC...", zap.String("bind", bind))
-	logger.Fatal("gRPC Failed", zap.Error(grpcServer.Serve(conn)))
+	srv := server.NewRPCServer(logger)
+	logger.Info("Starting GRPC Server...", zap.String("bind_addr", *bindAddr), zap.Int("bind_port", *grpcPort))
+	logger.Fatal("GRPC Server Failed!", zap.Error(srv.Serve(*bindAddr, *grpcPort)))
 }
 
 func serveHTTP(logger *zap.Logger) {
@@ -64,7 +58,8 @@ func serveHTTP(logger *zap.Logger) {
 	rpc.RegisterKobServiceHandler(context.Background(), gwmux, grpcConn)
 
 	mux := http.NewServeMux()
-	mux.Handle("/", gwmux)
+	mux.Handle("/api/v1/", http.StripPrefix("/api/v1", gwmux))
+	mux.Handle("/metrics", promhttp.Handler())
 
 	bind := fmt.Sprintf("%s:%d", *bindAddr, *httpPort)
 

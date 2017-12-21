@@ -15,7 +15,39 @@
     "application/json"
   ],
   "paths": {
-    "/v1/entry": {
+    "/auth/token": {
+      "get": {
+        "operationId": "CreateJWT",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcJWT"
+            }
+          }
+        },
+        "tags": [
+          "KobService"
+        ]
+      }
+    },
+    "/auth/url": {
+      "get": {
+        "operationId": "CreateAuthURL",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcAuthURL"
+            }
+          }
+        },
+        "tags": [
+          "KobService"
+        ]
+      }
+    },
+    "/entry": {
       "get": {
         "operationId": "ListEntries",
         "responses": {
@@ -51,11 +83,123 @@
         "tags": [
           "KobService"
         ]
+      },
+      "post": {
+        "operationId": "CreateEntry",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcEntry"
+            }
+          }
+        },
+        "tags": [
+          "KobService"
+        ]
       }
     },
-    "/v1/entry/{id}": {
+    "/entry/{entry_id}/comment": {
+      "get": {
+        "operationId": "ListEntryComments",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcCommentList"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KobService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateEntryComment",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcComment"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KobService"
+        ]
+      }
+    },
+    "/entry/{entry_id}/comment/{id}": {
+      "put": {
+        "operationId": "UpdateEntryComment",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcComment"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KobService"
+        ]
+      }
+    },
+    "/entry/{id}": {
       "get": {
         "operationId": "GetEntry",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcEntry"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "KobService"
+        ]
+      },
+      "put": {
+        "operationId": "UpdateEntry",
         "responses": {
           "200": {
             "description": "",
@@ -79,6 +223,14 @@
     }
   },
   "definitions": {
+    "rpcAuthURL": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "rpcAuthor": {
       "type": "object",
       "properties": {
@@ -87,6 +239,34 @@
         },
         "email": {
           "type": "string"
+        }
+      }
+    },
+    "rpcComment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/rpcAuthor"
+        },
+        "created_date": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "rpcCommentList": {
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rpcComment"
+          }
         }
       }
     },
@@ -105,7 +285,16 @@
         "author": {
           "$ref": "#/definitions/rpcAuthor"
         },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rpcTag"
+          }
+        },
         "created_date": {
+          "type": "string"
+        },
+        "updated_date": {
           "type": "string"
         }
       }
@@ -122,6 +311,25 @@
         "num_results": {
           "type": "string",
           "format": "int64"
+        }
+      }
+    },
+    "rpcJWT": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "rpcTag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
         }
       }
     }
