@@ -1,0 +1,10 @@
+@import '../../node_modules/bootstrap/scss/_functions';
+@import '../../node_modules/bootstrap/scss/_variables';
+
+$fa-font-path : '../../node_modules/@fortawesome/fontawesome-free-webfonts/webfonts';
+
+$h1-font-size:  $font-size-base * 1.5;
+$h2-font-size:  $font-size-base * 1.25;
+$h3-font-size:  $font-size-base;
+
+$default-border-color: #ddd;

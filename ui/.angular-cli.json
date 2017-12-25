@@ -19,7 +19,7 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.scss"
+        "scss/styles.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
@@ -28,6 +28,9 @@
         "prod": "environments/environment.prod.ts"
       }
     }
+  ],
+  "addons": [
+    "./node_modules/@fortawesome/fontawesome-free-webfonts/webfonts/*.+(otf|eot|svg|ttf|woff|woff2)"
   ],
   "e2e": {
     "protractor": {
