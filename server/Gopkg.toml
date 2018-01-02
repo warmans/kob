@@ -31,3 +31,7 @@
 [[constraint]]
   name = "github.com/grpc-ecosystem/go-grpc-prometheus"
   version = "1.1.0"
+
+[[constraint]]
+  name = "github.com/gocraft/dbr"
+  version = "2.1.0"

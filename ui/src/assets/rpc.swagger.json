@@ -15,6 +15,22 @@
     "application/json"
   ],
   "paths": {
+    "/activity": {
+      "get": {
+        "operationId": "ListActivity",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcActivityList"
+            }
+          }
+        },
+        "tags": [
+          "KobService"
+        ]
+      }
+    },
     "/auth/token": {
       "get": {
         "operationId": "CreateJWT",
@@ -26,6 +42,69 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "sub",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "given_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "family_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "profile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "picture",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "email_verified",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "tags": [
           "KobService"
         ]
@@ -191,7 +270,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -213,7 +293,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -223,6 +304,49 @@
     }
   },
   "definitions": {
+    "ActivityAction": {
+      "type": "string",
+      "enum": [
+        "CREATE_ENTRY",
+        "UPDATE_ENTRY"
+      ],
+      "default": "CREATE_ENTRY"
+    },
+    "rpcActivity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "action": {
+          "$ref": "#/definitions/ActivityAction"
+        },
+        "description": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/rpcAuthor"
+        },
+        "URI": {
+          "type": "string"
+        }
+      }
+    },
+    "rpcActivityList": {
+      "type": "object",
+      "properties": {
+        "activities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rpcActivity"
+          }
+        },
+        "num_results": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "rpcAuthURL": {
       "type": "object",
       "properties": {
@@ -235,9 +359,34 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "sub": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "given_name": {
+          "type": "string"
+        },
+        "family_name": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "picture": {
           "type": "string"
         },
         "email": {
+          "type": "string"
+        },
+        "email_verified": {
+          "type": "string"
+        },
+        "gender": {
           "type": "string"
         }
       }
@@ -246,7 +395,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "int64"
         },
         "author": {
           "$ref": "#/definitions/rpcAuthor"
@@ -274,7 +424,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "int64"
         },
         "title": {
           "type": "string"
@@ -326,7 +477,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "int64"
         },
         "label": {
           "type": "string"

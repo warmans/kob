@@ -3,20 +3,30 @@ package service
 import "context"
 import "github.com/warmans/kob/server/pkg/rpc"
 import "github.com/golang/protobuf/ptypes/empty"
+import "github.com/warmans/kob/server/pkg/db"
 
-func NewKobService() *KobService {
-	return &KobService{}
+func NewKobService(store *db.Store) *KobService {
+	return &KobService{store: store}
 }
 
 type KobService struct {
+	store *db.Store
 }
 
-func (s *KobService) ListEntries(context.Context, *rpc.ListEntriesRequest) (*rpc.EntryList, error) {
-	return &rpc.EntryList{Entries: []*rpc.Entry{{Title: "bar"}}}, nil
+func (s *KobService) ListEntries(ctx context.Context, req *rpc.ListEntriesRequest) (entries *rpc.EntryList, err error) {
+	err = s.store.WithSession(func(s *db.Session) error {
+		entries, err = s.ListEntries(req)
+		return err
+	})
+	return entries, Err2Code(err)
 }
 
-func (s *KobService) GetEntry(context.Context, *rpc.GetEntryRequest) (*rpc.Entry, error) {
-	return &rpc.Entry{Title: "foo"}, nil
+func (s *KobService) GetEntry(ctx context.Context, req *rpc.GetEntryRequest) (entry *rpc.Entry, err error) {
+	err = s.store.WithSession(func(s *db.Session) error {
+		entry, err = s.GetEntry(req.Id)
+		return err
+	})
+	return entry, Err2Code(err)
 }
 
 func (s *KobService) CreateEntry(context.Context, *rpc.CreateEntryRequest) (*rpc.Entry, error) {
@@ -39,12 +49,15 @@ func (s *KobService) UpdateEntryComment(context.Context, *rpc.UpdateEntryComment
 	return &rpc.Comment{Content: "ok"}, nil
 }
 
-func (s *KobService) CreateJWT(context.Context, *empty.Empty) (*rpc.JWT, error) {
+func (s *KobService) CreateJWT(ctx context.Context, author *rpc.Author) (*rpc.JWT, error) {
 	//https://skarlso.github.io/2016/06/12/google-signin-with-go/
 	return nil, nil
 }
 
 func (s *KobService) CreateAuthURL(context.Context, *empty.Empty) (*rpc.AuthURL, error) {
-	//https://skarlso.github.io/2016/06/12/google-signin-with-go/
+	return nil, nil
+}
+
+func (s *KobService) ListActivity(context.Context, *empty.Empty) (*rpc.ActivityList, error) {
 	return nil, nil
 }

@@ -3,6 +3,9 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/comm
 import { Observable } from 'rxjs/Observable';
 
 import {
+  ActivityAction,
+  rpcActivity,
+  rpcActivityList,
   rpcAuthURL,
   rpcAuthor,
   rpcComment,
@@ -28,13 +31,64 @@ export class ApiClientService {
   }
 
   /**
-  * Method CreateJWT
+  * Method ListActivity
   * @return Full HTTP response as Observable
   */
-  public CreateJWT(): Observable<HttpResponse<rpcJWT>> {
+  public ListActivity(): Observable<HttpResponse<rpcActivityList>> {
+    let uri = `/activity`;
+    let headers = new HttpHeaders();
+    let params = new HttpParams();
+    return this.sendRequest<rpcActivityList>('get', uri, headers, params, null);
+  }
+
+  /**
+  * Method CreateJWT
+  * @param id 
+  * @param sub 
+  * @param name 
+  * @param given_name 
+  * @param family_name 
+  * @param profile 
+  * @param picture 
+  * @param email 
+  * @param email_verified 
+  * @param gender 
+  * @return Full HTTP response as Observable
+  */
+  public CreateJWT(id: string, sub: string, name: string, given_name: string, family_name: string, profile: string, picture: string, email: string, email_verified: string, gender: string): Observable<HttpResponse<rpcJWT>> {
     let uri = `/auth/token`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
+    if (id !== undefined && id !== null) {
+      params = params.set('id', id + '');
+    }
+    if (sub !== undefined && sub !== null) {
+      params = params.set('sub', sub + '');
+    }
+    if (name !== undefined && name !== null) {
+      params = params.set('name', name + '');
+    }
+    if (given_name !== undefined && given_name !== null) {
+      params = params.set('given_name', given_name + '');
+    }
+    if (family_name !== undefined && family_name !== null) {
+      params = params.set('family_name', family_name + '');
+    }
+    if (profile !== undefined && profile !== null) {
+      params = params.set('profile', profile + '');
+    }
+    if (picture !== undefined && picture !== null) {
+      params = params.set('picture', picture + '');
+    }
+    if (email !== undefined && email !== null) {
+      params = params.set('email', email + '');
+    }
+    if (email_verified !== undefined && email_verified !== null) {
+      params = params.set('email_verified', email_verified + '');
+    }
+    if (gender !== undefined && gender !== null) {
+      params = params.set('gender', gender + '');
+    }
     return this.sendRequest<rpcJWT>('get', uri, headers, params, null);
   }
 

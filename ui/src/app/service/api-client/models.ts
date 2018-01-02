@@ -1,3 +1,6 @@
+export { ActivityAction } from './models/activityaction.model';
+export { rpcActivity } from './models/rpcactivity.model';
+export { rpcActivityList } from './models/rpcactivitylist.model';
 export { rpcAuthURL } from './models/rpcauthurl.model';
 export { rpcAuthor } from './models/rpcauthor.model';
 export { rpcComment } from './models/rpccomment.model';
