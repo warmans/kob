@@ -10,10 +10,14 @@ import {
   rpcAuthor,
   rpcComment,
   rpcCommentList,
+  rpcCreateEntryCommentRequest,
+  rpcCreateEntryRequest,
   rpcEntry,
   rpcEntryList,
   rpcJWT,
-  rpcTag
+  rpcTag,
+  rpcUpdateEntryCommentRequest,
+  rpcUpdateEntryRequest
 } from './models';
 
 /**
@@ -35,7 +39,7 @@ export class ApiClientService {
   * @return Full HTTP response as Observable
   */
   public ListActivity(): Observable<HttpResponse<rpcActivityList>> {
-    let uri = `/activity`;
+    let uri = `/api/v1/activity`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
     return this.sendRequest<rpcActivityList>('get', uri, headers, params, null);
@@ -56,7 +60,7 @@ export class ApiClientService {
   * @return Full HTTP response as Observable
   */
   public CreateJWT(id: string, sub: string, name: string, given_name: string, family_name: string, profile: string, picture: string, email: string, email_verified: string, gender: string): Observable<HttpResponse<rpcJWT>> {
-    let uri = `/auth/token`;
+    let uri = `/api/v1/auth/token`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
     if (id !== undefined && id !== null) {
@@ -97,7 +101,7 @@ export class ApiClientService {
   * @return Full HTTP response as Observable
   */
   public CreateAuthURL(): Observable<HttpResponse<rpcAuthURL>> {
-    let uri = `/auth/url`;
+    let uri = `/api/v1/auth/url`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
     return this.sendRequest<rpcAuthURL>('get', uri, headers, params, null);
@@ -111,7 +115,7 @@ export class ApiClientService {
   * @return Full HTTP response as Observable
   */
   public ListEntries(page: string, num_per_page: string, keyword: string): Observable<HttpResponse<rpcEntryList>> {
-    let uri = `/entry`;
+    let uri = `/api/v1/entry`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
     if (page !== undefined && page !== null) {
@@ -128,13 +132,14 @@ export class ApiClientService {
 
   /**
   * Method CreateEntry
+  * @param body 
   * @return Full HTTP response as Observable
   */
-  public CreateEntry(): Observable<HttpResponse<rpcEntry>> {
-    let uri = `/entry`;
+  public CreateEntry(body: rpcCreateEntryRequest): Observable<HttpResponse<rpcEntry>> {
+    let uri = `/api/v1/entry`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
-    return this.sendRequest<rpcEntry>('post', uri, headers, params, null);
+    return this.sendRequest<rpcEntry>('post', uri, headers, params, JSON.stringify(body));
   }
 
   /**
@@ -143,7 +148,7 @@ export class ApiClientService {
   * @return Full HTTP response as Observable
   */
   public ListEntryComments(entry_id: string): Observable<HttpResponse<rpcCommentList>> {
-    let uri = `/entry/${entry_id}/comment`;
+    let uri = `/api/v1/entry/${entry_id}/comment`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
     return this.sendRequest<rpcCommentList>('get', uri, headers, params, null);
@@ -152,26 +157,28 @@ export class ApiClientService {
   /**
   * Method CreateEntryComment
   * @param entry_id 
+  * @param body 
   * @return Full HTTP response as Observable
   */
-  public CreateEntryComment(entry_id: string): Observable<HttpResponse<rpcComment>> {
-    let uri = `/entry/${entry_id}/comment`;
+  public CreateEntryComment(entry_id: string, body: rpcCreateEntryCommentRequest): Observable<HttpResponse<rpcComment>> {
+    let uri = `/api/v1/entry/${entry_id}/comment`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
-    return this.sendRequest<rpcComment>('post', uri, headers, params, null);
+    return this.sendRequest<rpcComment>('post', uri, headers, params, JSON.stringify(body));
   }
 
   /**
   * Method UpdateEntryComment
   * @param entry_id 
   * @param id 
+  * @param body 
   * @return Full HTTP response as Observable
   */
-  public UpdateEntryComment(entry_id: string, id: string): Observable<HttpResponse<rpcComment>> {
-    let uri = `/entry/${entry_id}/comment/${id}`;
+  public UpdateEntryComment(entry_id: string, id: string, body: rpcUpdateEntryCommentRequest): Observable<HttpResponse<rpcComment>> {
+    let uri = `/api/v1/entry/${entry_id}/comment/${id}`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
-    return this.sendRequest<rpcComment>('put', uri, headers, params, null);
+    return this.sendRequest<rpcComment>('put', uri, headers, params, JSON.stringify(body));
   }
 
   /**
@@ -180,7 +187,7 @@ export class ApiClientService {
   * @return Full HTTP response as Observable
   */
   public GetEntry(id: string): Observable<HttpResponse<rpcEntry>> {
-    let uri = `/entry/${id}`;
+    let uri = `/api/v1/entry/${id}`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
     return this.sendRequest<rpcEntry>('get', uri, headers, params, null);
@@ -189,13 +196,14 @@ export class ApiClientService {
   /**
   * Method UpdateEntry
   * @param id 
+  * @param body 
   * @return Full HTTP response as Observable
   */
-  public UpdateEntry(id: string): Observable<HttpResponse<rpcEntry>> {
-    let uri = `/entry/${id}`;
+  public UpdateEntry(id: string, body: rpcUpdateEntryRequest): Observable<HttpResponse<rpcEntry>> {
+    let uri = `/api/v1/entry/${id}`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
-    return this.sendRequest<rpcEntry>('put', uri, headers, params, null);
+    return this.sendRequest<rpcEntry>('put', uri, headers, params, JSON.stringify(body));
   }
 
   private sendRequest<T>(method: string, uri: string, headers: HttpHeaders, params: HttpParams, body: any): Observable<HttpResponse<T>> {

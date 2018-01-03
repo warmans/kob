@@ -17,8 +17,8 @@ dev:
 
 .PHONY: generate
 generate:
-	go generate `go list ./server/pkg/rpc`
-	cd ui; node_modules/.bin/a4apigen -s src/assets/rpc.swagger.json -o src/app/service/api-client
+	@go generate `go list ./server/pkg/rpc`
+	@cd ui; node_modules/.bin/a4apigen -s src/assets/rpc.swagger.json -o src/app/service/api-client
 
 .PHONY: build-server
 build-server:
@@ -28,13 +28,13 @@ build-server:
 
 .PHONY: run-ui
 run-ui:
-	cd ui; node_modules/.bin/ng serve
+	cd ui; node_modules/.bin/ng serve -pc proxy.dev.conf.json
 
 .PHONY: run-server
 run-server:
 	./build/bin/kob-server -db-dsn=$(DEV_DB_DSN)
 
-.PHONY: run-db
+.PHONY: run-services
 run-services: 
 	cd dev; POSTGRES_USER=$(DEV_DB_USER) POSTGRES_PASSWORD=$(DEV_DB_PASS) docker-compose up
 

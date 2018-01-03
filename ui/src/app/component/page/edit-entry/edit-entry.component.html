@@ -1,0 +1,43 @@
+<div class="upper pt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <div>
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="far fa-comment-alt"></i> Activity Feed</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fa fa-align-justify"></i> Article Index</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/entry/new"><i class="fas fa-pencil-alt"></i> New Article</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+    <div class="row">
+      <div class="col-xl-12 py-5">
+          
+          <div class="mb-4">
+            <label>Title</label>
+            <input class="form-control" id="title" placeholder="The Entry Title..." [(ngModel)]="entry.title">
+          </div>
+          
+          <div class="mb-4">
+            <label>Content</label>
+            <simplemde [(ngModel)]="entry.content" [options]="{}"></simplemde>
+          </div>
+
+          <div class="btn-group float-right" role="group">
+            <button type="button" class="btn btn-success" (click)="create()" *ngIf="!entry.id">Create</button>
+            <button type="button" class="btn btn-success" (click)="save()" *ngIf="entry.id">Save</button>
+          </div>
+
+      </div>
+    </div>
+</div>

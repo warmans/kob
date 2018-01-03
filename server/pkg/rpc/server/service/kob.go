@@ -29,8 +29,13 @@ func (s *KobService) GetEntry(ctx context.Context, req *rpc.GetEntryRequest) (en
 	return entry, Err2Code(err)
 }
 
-func (s *KobService) CreateEntry(context.Context, *rpc.CreateEntryRequest) (*rpc.Entry, error) {
-	return &rpc.Entry{Title: "foo"}, nil
+func (s *KobService) CreateEntry(ctx context.Context, req *rpc.CreateEntryRequest) (entry *rpc.Entry, err error) {
+	req.AuthorId = 1; //todo: from token
+	err = s.store.WithSession(func(s *db.Session) error {
+		entry, err = s.CreateEntry(req)
+		return err
+	})
+	return entry, Err2Code(err)
 }
 
 func (s *KobService) UpdateEntry(context.Context, *rpc.UpdateEntryRequest) (*rpc.Entry, error) {

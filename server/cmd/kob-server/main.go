@@ -69,7 +69,7 @@ func serveHTTP(logger *zap.Logger) {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir(*webRoot)))
-	mux.Handle("/api/v1/", http.StripPrefix("/api/v1", gwmux))
+	mux.Handle("/api/",  gwmux)
 	mux.Handle("/metrics", promhttp.Handler())
 
 	bind := fmt.Sprintf("%s:%d", *bindAddr, *httpPort)

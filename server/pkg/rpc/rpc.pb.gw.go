@@ -73,15 +73,11 @@ func request_KobService_GetEntry_0(ctx context.Context, marshaler runtime.Marsha
 
 }
 
-var (
-	filter_KobService_CreateEntry_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
 func request_KobService_CreateEntry_0(ctx context.Context, marshaler runtime.Marshaler, client KobServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CreateEntryRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_KobService_CreateEntry_0); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -90,13 +86,13 @@ func request_KobService_CreateEntry_0(ctx context.Context, marshaler runtime.Mar
 
 }
 
-var (
-	filter_KobService_UpdateEntry_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
 func request_KobService_UpdateEntry_0(ctx context.Context, marshaler runtime.Marshaler, client KobServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UpdateEntryRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -114,10 +110,6 @@ func request_KobService_UpdateEntry_0(ctx context.Context, marshaler runtime.Mar
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
-	}
-
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_KobService_UpdateEntry_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.UpdateEntry(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -152,13 +144,13 @@ func request_KobService_ListEntryComments_0(ctx context.Context, marshaler runti
 
 }
 
-var (
-	filter_KobService_CreateEntryComment_0 = &utilities.DoubleArray{Encoding: map[string]int{"entry_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
 func request_KobService_CreateEntryComment_0(ctx context.Context, marshaler runtime.Marshaler, client KobServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CreateEntryCommentRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -178,22 +170,18 @@ func request_KobService_CreateEntryComment_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "entry_id", err)
 	}
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_KobService_CreateEntryComment_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
 	msg, err := client.CreateEntryComment(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-var (
-	filter_KobService_UpdateEntryComment_0 = &utilities.DoubleArray{Encoding: map[string]int{"entry_id": 0, "id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
-)
-
 func request_KobService_UpdateEntryComment_0(ctx context.Context, marshaler runtime.Marshaler, client KobServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UpdateEntryCommentRequest
 	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	var (
 		val string
@@ -222,10 +210,6 @@ func request_KobService_UpdateEntryComment_0(ctx context.Context, marshaler runt
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
-	}
-
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_KobService_UpdateEntryComment_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.UpdateEntryComment(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -600,25 +584,25 @@ func RegisterKobServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 }
 
 var (
-	pattern_KobService_ListEntries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"entry"}, ""))
+	pattern_KobService_ListEntries_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "entry"}, ""))
 
-	pattern_KobService_GetEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"entry", "id"}, ""))
+	pattern_KobService_GetEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "entry", "id"}, ""))
 
-	pattern_KobService_CreateEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"entry"}, ""))
+	pattern_KobService_CreateEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "entry"}, ""))
 
-	pattern_KobService_UpdateEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"entry", "id"}, ""))
+	pattern_KobService_UpdateEntry_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "entry", "id"}, ""))
 
-	pattern_KobService_ListEntryComments_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"entry", "entry_id", "comment"}, ""))
+	pattern_KobService_ListEntryComments_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "entry", "entry_id", "comment"}, ""))
 
-	pattern_KobService_CreateEntryComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"entry", "entry_id", "comment"}, ""))
+	pattern_KobService_CreateEntryComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "entry", "entry_id", "comment"}, ""))
 
-	pattern_KobService_UpdateEntryComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"entry", "entry_id", "comment", "id"}, ""))
+	pattern_KobService_UpdateEntryComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "v1", "entry", "entry_id", "comment", "id"}, ""))
 
-	pattern_KobService_CreateJWT_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"auth", "token"}, ""))
+	pattern_KobService_CreateJWT_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "auth", "token"}, ""))
 
-	pattern_KobService_CreateAuthURL_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"auth", "url"}, ""))
+	pattern_KobService_CreateAuthURL_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "v1", "auth", "url"}, ""))
 
-	pattern_KobService_ListActivity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"activity"}, ""))
+	pattern_KobService_ListActivity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "activity"}, ""))
 )
 
 var (
