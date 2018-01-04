@@ -8,6 +8,6 @@ export interface rpcAuthor {
   profile: string;
   picture: string;
   email: string;
-  email_verified: string;
+  email_verified: boolean;
   gender: string;
 }

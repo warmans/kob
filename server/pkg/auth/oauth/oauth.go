@@ -3,66 +3,75 @@ package oauth
 // https://skarlso.github.io/2016/06/12/google-signin-with-go/
 
 import (
-    "crypto/rand"
-    "encoding/base64"
-    "encoding/json"
-    "io/ioutil"
-    "fmt"
-    "log"
-    "os"
-    "net/http"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"io/ioutil"
 
-    "golang.org/x/oauth2"
-    "golang.org/x/oauth2/google"
+	"github.com/warmans/kob/server/pkg/rpc"
+
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 // Credentials which stores google ids.
 type Credentials struct {
-    Cid     string `json:"cid"`
-    Csecret string `json:"csecret"`
+	Cid     string `json:"cid"`
+	Csecret string `json:"csecret"`
 }
 
-// User is a retrieved and authentiacted user.
-type User struct {
-    Sub string `json:"sub"`
-    Name string `json:"name"`
-    GivenName string `json:"given_name"`
-    FamilyName string `json:"family_name"`
-    Profile string `json:"profile"`
-    Picture string `json:"picture"`
-    Email string `json:"email"`
-    EmailVerified string `json:"email_verified"`
-    Gender string `json:"gender"`
-}
+func NewClient(credsPath string, redirectURI string) (*Client, error) {
 
-func NewClient(credsPath string, redirectURI string) *Client {
-
-    file, err := ioutil.ReadFile(credsPath)
-    if err != nil {
+	file, err := ioutil.ReadFile(credsPath)
+	if err != nil {
 		return nil, err
-    }
-    json.Unmarshal(file, &cred)
+	}
+	cred := &Credentials{}
+	if err := json.Unmarshal(file, &cred); err != nil {
+		return nil, err
+	}
 
-    conf :=  &oauth2.Config{
-        ClientID:     cred.Cid,
-        ClientSecret: cred.Csecret,
-        RedirectURL:  redirectURI,
-        Scopes: []string{
-            "https://www.googleapis.com/auth/userinfo.email", // You have to select your own scope from here -> https://developers.google.com/identity/protocols/googlescopes#google_sign-in
-        },
-        Endpoint: google.Endpoint,
-    }
+	conf := &oauth2.Config{
+		ClientID:     cred.Cid,
+		ClientSecret: cred.Csecret,
+		RedirectURL:  redirectURI,
+		Scopes: []string{
+			"https://www.googleapis.com/auth/userinfo.email", // You have to select your own scope from here -> https://developers.google.com/identity/protocols/googlescopes#google_sign-in
+		},
+		Endpoint: google.Endpoint,
+	}
 
-    return &Client{conf: conf}
+	return &Client{conf: conf}, nil
 }
 
 type Client struct {
-    conf *oauth2.Config
+	conf *oauth2.Config
 }
 
 func (c *Client) CreateLoginURL() (string, string) {
-    code := CreateCode()
-    return c.conf.AuthCodeURL(code), code
+	code := CreateCode()
+	return c.conf.AuthCodeURL(code), code
+}
+
+func (c *Client) GetAuthor(code string) (*rpc.Author, error) {
+
+	tok, err := c.conf.Exchange(oauth2.NoContext, code)
+	if err != nil {
+		return nil, err
+	}
+	client := c.conf.Client(oauth2.NoContext, tok)
+
+	resp, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+    author := &rpc.Author{}
+	if err := json.NewDecoder(resp.Body).Decode(author); err != nil {
+		return nil, err
+	}
+	return author, nil
 }
 
 func CreateCode() string {
@@ -70,4 +79,3 @@ func CreateCode() string {
 	rand.Read(b)
 	return base64.StdEncoding.EncodeToString(b)
 }
-

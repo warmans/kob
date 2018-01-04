@@ -128,7 +128,7 @@ message Author {
     string profile = 6;
     string picture = 7;
     string email = 8;
-    string email_verified = 9;
+    bool email_verified = 9;
     string gender = 10;
 }
 

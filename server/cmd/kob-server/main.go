@@ -5,9 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/warmans/kob/server/pkg/auth/oauth"
 	"github.com/gocraft/dbr"
-
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/warmans/kob/server/pkg/db"
@@ -15,7 +16,7 @@ import (
 	"github.com/warmans/kob/server/pkg/rpc/server"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-
+	"github.com/patrickmn/go-cache"
 	_ "github.com/lib/pq"
 )
 
@@ -24,11 +25,13 @@ var (
 )
 
 var (
-	bindAddr = flag.String("bind-addr", "", "bind to this interface")
-	httpPort = flag.Int("http-port", 8080, "port to bind HTTP server")
-	grpcPort = flag.Int("grcp-port", 9090, "port to bind gRPC server")
-	webRoot  = flag.String("web-root", "build/dist", "path to public dir")
-	dbDSN    = flag.String("db-dsn", "", "DSN of postgres DB")
+	bindAddr    = flag.String("bind-addr", "", "bind to this interface")
+	httpPort    = flag.Int("http-port", 8080, "port to bind HTTP server")
+	grpcPort    = flag.Int("grcp-port", 9090, "port to bind gRPC server")
+	webRoot     = flag.String("web-root", "build/dist", "path to public dir")
+	dbDSN       = flag.String("db-dsn", "", "DSN of postgres DB")
+	host        = flag.String("host", "http://localhost:8080", "host of service inc. scheme. Used for oauth redirects")
+	googleCreds = flag.String("google-creds", "google-creds.json", "Google auth credentials")
 )
 
 func main() {
@@ -42,11 +45,20 @@ func main() {
 		logger.Fatal("DB connection not possible", zap.Error(err))
 	}
 
+	store := db.NewStore(conn)
+
+	oauthClient, err := oauth.NewClient(*googleCreds, *host+"/oauth/return")
+	if err != nil {
+		logger.Fatal("Failed to create OAUTH client", zap.Error(err))
+	}
+
+	oauthHandlers := oauth.NewOauthHandler(oauthClient, cache.New(time.Hour, time.Minute), store, logger)
+
 	//start GRPC
-	go serveGRPC(logger, db.NewStore(conn))
+	go serveGRPC(logger, store)
 
 	// start HTTP
-	serveHTTP(logger)
+	serveHTTP(logger, oauthHandlers)
 }
 
 func serveGRPC(logger *zap.Logger, store *db.Store) {
@@ -56,7 +68,7 @@ func serveGRPC(logger *zap.Logger, store *db.Store) {
 	logger.Fatal("GRPC Server Failed!", zap.Error(srv.Serve(*bindAddr, *grpcPort)))
 }
 
-func serveHTTP(logger *zap.Logger) {
+func serveHTTP(logger *zap.Logger, oauthHandlers *oauth.Handler) {
 
 	grpcConn, err := grpc.Dial(fmt.Sprintf("127.0.0.1:%d", *grpcPort), grpc.WithInsecure())
 	if err != nil {
@@ -69,8 +81,10 @@ func serveHTTP(logger *zap.Logger) {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir(*webRoot)))
-	mux.Handle("/api/",  gwmux)
+	mux.Handle("/api/", gwmux)
 	mux.Handle("/metrics", promhttp.Handler())
+	mux.HandleFunc("/oauth/redirect", http.HandlerFunc(oauthHandlers.HandleLoginRequest))
+	mux.HandleFunc("/oauth/return", http.HandlerFunc(oauthHandlers.HandleLoginResponse))
 
 	bind := fmt.Sprintf("%s:%d", *bindAddr, *httpPort)
 

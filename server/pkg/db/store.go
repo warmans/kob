@@ -109,6 +109,32 @@ func (s *Session) ListEntries(req *rpc.ListEntriesRequest) (*rpc.EntryList, erro
 	return s.entries(uint64(req.NumPerPage), uint64(req.NumPerPage*req.Page))
 }
 
+func (s *Session) UpsertAuthor(author *rpc.Author) (*rpc.Author, error) {
+
+	err := s.tx.QueryRow("SELECT id FROM author WHERE email=$1", author.Email).Scan(&author.Id)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+	if err := s.tx.QueryRow(`
+		INSERT INTO author (sub, name, given_name, family_name, profile, picture, email, email_verified, gender) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		ON CONFLICT (email) DO UPDATE SET sub=$1, name=$2, given_name=$3, family_name=$4, profile=$5, picture=$6, email=$7, email_verified=$8, gender=$9
+		RETURNING id`,
+		author.Sub,
+		author.Name,
+		author.GivenName,
+		author.FamilyName,
+		author.Profile,
+		author.Picture,
+		author.Email,
+		author.EmailVerified,
+		author.Gender,
+	).Scan(&author.Id); err != nil {
+		return nil, errors.Wrap(err, "failed to create entry")
+	}
+	return author, nil
+}
+
 func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) (*rpc.EntryList, error) {
 	q := sq.Select(
 		"e.id",
@@ -156,20 +182,20 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) (*rp
 			Author: &rpc.Author{},
 		}
 		if err := res.Scan(
-			entry.Id,
-			entry.Title,
-			entry.Content,
-			entry.CreatedDate,
-			entry.UpdatedDate,
-			entry.Author.Id,
-			entry.Author.Sub,
-			entry.Author.Name,
-			entry.Author.GivenName,
-			entry.Author.FamilyName,
-			entry.Author.Profile,
-			entry.Author.Email,
-			entry.Author.EmailVerified,
-			entry.Author.Gender,
+			&entry.Id,
+			&entry.Title,
+			&entry.Content,
+			&entry.CreatedDate,
+			&entry.UpdatedDate,
+			&entry.Author.Id,
+			&entry.Author.Sub,
+			&entry.Author.Name,
+			&entry.Author.GivenName,
+			&entry.Author.FamilyName,
+			&entry.Author.Profile,
+			&entry.Author.Email,
+			&entry.Author.EmailVerified,
+			&entry.Author.Gender,
 		); err != nil {
 			return nil, err
 		}
@@ -220,7 +246,7 @@ func (s *Session) tags(where ...sq.Sqlizer) ([]*rpc.Tag, error) {
 	tags := make([]*rpc.Tag, 0)
 	for res.Next() {
 		tag := &rpc.Tag{}
-		if err := res.Scan(tag.Id, tag.Label); err != nil {
+		if err := res.Scan(&tag.Id, &tag.Label); err != nil {
 			return nil, err
 		}
 		tags = append(tags, tag)

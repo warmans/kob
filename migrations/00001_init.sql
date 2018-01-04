@@ -8,7 +8,7 @@ CREATE TABLE author (
     family_name TEXT,
     profile TEXT,
     picture TEXT,
-    email TEXT,
+    email TEXT UNIQUE,
     email_verified TEXT,
     gender TEXT
 );

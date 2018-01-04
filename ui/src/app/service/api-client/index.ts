@@ -59,7 +59,7 @@ export class ApiClientService {
   * @param gender 
   * @return Full HTTP response as Observable
   */
-  public CreateJWT(id: string, sub: string, name: string, given_name: string, family_name: string, profile: string, picture: string, email: string, email_verified: string, gender: string): Observable<HttpResponse<rpcJWT>> {
+  public CreateJWT(id: string, sub: string, name: string, given_name: string, family_name: string, profile: string, picture: string, email: string, email_verified: boolean, gender: string): Observable<HttpResponse<rpcJWT>> {
     let uri = `/api/v1/auth/token`;
     let headers = new HttpHeaders();
     let params = new HttpParams();

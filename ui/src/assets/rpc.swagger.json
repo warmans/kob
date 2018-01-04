@@ -96,7 +96,8 @@
             "name": "email_verified",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "boolean",
+            "format": "boolean"
           },
           {
             "name": "gender",
@@ -418,7 +419,8 @@
           "type": "string"
         },
         "email_verified": {
-          "type": "string"
+          "type": "boolean",
+          "format": "boolean"
         },
         "gender": {
           "type": "string"
