@@ -20,6 +20,12 @@
   revision = "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9"
 
 [[projects]]
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  revision = "dbeaa9332f19a944acb5736b4456cfcc02140e29"
+  version = "v3.1.0"
+
+[[projects]]
   name = "github.com/gocraft/dbr"
   packages = [
     ".",
@@ -275,6 +281,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "39412ed8fcc015b74c299448581960fd6f628e71e0db1c8f53310bcdd7e0e70b"
+  inputs-digest = "faf84968a840bf7a9ebe161f65b4922ae5de7417840477bfa4a8def74456a421"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -3,11 +3,11 @@ import { rpcCreateEntryRequest } from '../../../service/api-client/models/rpccre
 import { ApiClientService } from '../../../service/api-client/index';
 
 @Component({
-  selector: 'app-edit-entry',
-  templateUrl: './edit-entry.component.html',
-  styleUrls: ['./edit-entry.component.scss']
+  selector: 'app-entries-edit',
+  templateUrl: './entries-edit.component.html',
+  styleUrls: ['./entries-edit.component.scss']
 })
-export class EditEntryComponent implements OnInit {
+export class EntriesEditComponent implements OnInit {
 
   public entry: rpcCreateEntryRequest = <rpcCreateEntryRequest>{};
 
@@ -17,7 +17,7 @@ export class EditEntryComponent implements OnInit {
   }
 
   public create() {
-    console.log(this.entry)
+    console.log(this.entry);
     this.apiClient.CreateEntry(this.entry).subscribe((data) => {
       console.log(data);
     });

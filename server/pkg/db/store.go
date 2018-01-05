@@ -31,7 +31,7 @@ func (s *Store) WithSession(f func(*Session) error) error {
 	}
 	if err := f(sess); err != nil {
 		if err2 := sess.Rollback(); err2 != nil {
-			return errors.Wrapf(err, "with rollback failure: %s")
+			return errors.Wrapf(err, "with rollback failure: %s", err2)
 		}
 		return err
 	}
@@ -96,17 +96,33 @@ func (s *Session) GetEntry(id int64) (*rpc.Entry, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(entries.Entries) == 0 {
+	if len(entries) == 0 {
 		return nil, sql.ErrNoRows
 	}
-	return entries.Entries[0], nil
+	return entries[0], nil
 }
 
 func (s *Session) ListEntries(req *rpc.ListEntriesRequest) (*rpc.EntryList, error) {
+	
+	var err error
+	entryList := &rpc.EntryList{}
+
 	if req.NumPerPage == 0 {
 		req.NumPerPage = 50
 	}
-	return s.entries(uint64(req.NumPerPage), uint64(req.NumPerPage*req.Page))
+	entryList.NumResults, err = s.entryCount(/*todo: where */)
+	if err != nil {
+		return nil, err
+	}
+	if entryList.NumResults == 0 {
+		return entryList, nil //if the count is 0 skip main query
+	}
+
+	entryList.Entries, err =  s.entries(uint64(req.NumPerPage), uint64(req.NumPerPage*req.Page) /*todo: where */)
+	if err != nil {
+		return nil, err
+	}
+	return entryList, nil
 }
 
 func (s *Session) UpsertAuthor(author *rpc.Author) (*rpc.Author, error) {
@@ -135,7 +151,8 @@ func (s *Session) UpsertAuthor(author *rpc.Author) (*rpc.Author, error) {
 	return author, nil
 }
 
-func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) (*rpc.EntryList, error) {
+func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) ([]*rpc.Entry, error) {
+
 	q := sq.Select(
 		"e.id",
 		"e.title",
@@ -152,7 +169,11 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) (*rp
 		"a.email",
 		"a.email_verified",
 		"a.gender",
-	).From("entry e").LeftJoin("author a ON e.author_id = a.id").Limit(limit).Offset(offset)
+	).
+	From("entry e").
+	LeftJoin("author a ON e.author_id = a.id").
+	Limit(limit).
+	Offset(offset)
 
 	for _, c := range where {
 		q.Where(c)
@@ -168,15 +189,8 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) (*rp
 		return nil, err
 	}
 	defer res.Close()
-
-	entries := &rpc.EntryList{Entries: make([]*rpc.Entry, 0)}
-
-	if entries.NumResults, err = s.entryCount(where...); err != nil {
-		return nil, err
-	}
-	if entries.NumResults == 0 {
-		return entries, nil //if the count is 0 skip second query
-	}
+	
+	entries := make([]*rpc.Entry, 0)
 	for res.Next() {
 		entry := &rpc.Entry{
 			Author: &rpc.Author{},
@@ -193,6 +207,7 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) (*rp
 			&entry.Author.GivenName,
 			&entry.Author.FamilyName,
 			&entry.Author.Profile,
+			&entry.Author.Picture,
 			&entry.Author.Email,
 			&entry.Author.EmailVerified,
 			&entry.Author.Gender,
@@ -205,8 +220,7 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) (*rp
 		if err != nil {
 			return nil, err
 		}
-
-		entries.Entries = append(entries.Entries, entry)
+		entries = append(entries, entry)
 	}
 	return entries, nil
 }

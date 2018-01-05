@@ -1,6 +1,7 @@
-package oauth
+package google
 
 import (
+	"github.com/warmans/kob/server/pkg/auth/token"
 	"go.uber.org/zap"
 	"github.com/warmans/kob/server/pkg/db"
 	"net/url"
@@ -9,25 +10,32 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-func NewOauthHandler(client *Client, stateCache *cache.Cache, store *db.Store, logger *zap.Logger) *Handler {
-	return &Handler{client: client, stateCache: stateCache, store: store, logger: logger}
+func NewOauthHandler(client *Client, stateCache *cache.Cache, store *db.Store, logger *zap.Logger, tokenStrategy token.Strategy) *OauthHandler {
+	return &OauthHandler{
+		client: client, 
+		stateCache: stateCache, 
+		store: store, 
+		logger: logger, 
+		tokenStrategy: tokenStrategy,
+	}
 }
 
-type Handler struct {
+type OauthHandler struct {
 	client *Client
 	stateCache *cache.Cache
 	store *db.Store
 	logger *zap.Logger
+	tokenStrategy token.Strategy
 }
 
 // HandleLoginRequest performs redirect to google login page.
-func (h *Handler) HandleLoginRequest(rw http.ResponseWriter, r *http.Request) {
+func (h *OauthHandler) HandleLoginRequest(rw http.ResponseWriter, r *http.Request) {
 	redirectURL, state := h.client.CreateLoginURL()
 	h.stateCache.Set(state, state, time.Minute * 10)
 	http.Redirect(rw, r, redirectURL, http.StatusFound)
 }
 
-func (h *Handler) HandleLoginResponse(rw http.ResponseWriter, r *http.Request) {
+func (h *OauthHandler) HandleLoginResponse(rw http.ResponseWriter, r *http.Request) {
 	
 	returnURL := "/login/complete"
 	returnErr := ""
@@ -64,7 +72,10 @@ func (h *Handler) HandleLoginResponse(rw http.ResponseWriter, r *http.Request) {
 			h.logger.Error(returnErr, zap.Error(err))
 			return err
 		}
-		returnToken = "jwt"+upserted.Email
+		returnToken, err = h.tokenStrategy.CreateToken(upserted)
+		if err != nil {
+			return err
+		}
 		return nil
 	});
 	if err != nil {

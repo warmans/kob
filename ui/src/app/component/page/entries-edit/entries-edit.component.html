@@ -1,0 +1,14 @@
+<div class="mb-4">
+  <label>Title</label>
+  <input class="form-control" id="title" placeholder="The Entry Title..." [(ngModel)]="entry.title">
+</div>
+
+<div class="mb-4">
+  <label>Content</label>
+  <simplemde [(ngModel)]="entry.content" [options]="{}"></simplemde>
+</div>
+
+<div class="btn-group float-right" role="group">
+  <button type="button" class="btn btn-success" (click)="create()" *ngIf="!entry.id">Create</button>
+  <button type="button" class="btn btn-success" (click)="save()" *ngIf="entry.id">Save</button>
+</div>

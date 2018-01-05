@@ -336,6 +336,22 @@
           "KobService"
         ]
       }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "GetMe",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcAuthor"
+            }
+          }
+        },
+        "tags": [
+          "KobService"
+        ]
+      }
     }
   },
   "definitions": {

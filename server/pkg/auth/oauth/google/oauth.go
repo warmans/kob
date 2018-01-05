@@ -1,4 +1,4 @@
-package oauth
+package google
 
 // https://skarlso.github.io/2016/06/12/google-signin-with-go/
 

@@ -1,0 +1,51 @@
+<nav class="navbar navbar-dark bg-dark component-bg ">
+  <div class="container-fluid justify-content-between">
+    <a class="navbar-brand" [routerLink]="['/entries', 'index']"> KOB</a>
+    <div class="text-white">
+      <a href="/logout">
+        <img src="{{claims.author.picture}}" alt="" class="rounded-circle" style="width: 32px">
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="upper">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xl-12 pt-3 px-3">
+        <form class="pb-3">
+          <div class="input-group input-group-lg">
+            <input class="form-control" id="search" aria-describedby="searchHelp" placeholder="Terms...">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button">Search</button>
+            </span>
+          </div>
+        </form>
+        <div>
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link" href="#" [routerLink]="['/entries', 'activity']" [routerLinkActive]="['active']">
+                <i class="far fa-comment-alt"></i> Activity Feed</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" [routerLink]="['/entries', 'index']" [routerLinkActive]="['active']">
+                <i class="fa fa-align-justify"></i> Article Index</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/entry/new" [routerLink]="['/entries', 'new']" [routerLinkActive]="['active']">
+                <i class="fas fa-pencil-alt"></i> New Article</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-12 p-4">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

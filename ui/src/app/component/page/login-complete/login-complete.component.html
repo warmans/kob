@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xl-12 py-5 text-center">
+        <span *ngIf="err === '' && token === ''">Completing Login...</span>
+        <div class="alert alert-danger" role="alert"  *ngIf="err !== ''">
+            <strong>There was a problem!</strong><br />
+            Server response was: {{err}}<br />
+            Try going back to the login page and trying again: <a href="/login" class="alert-link">go back</a>.
+        </div>
+        <div class="alert alert-success" role="alert"  *ngIf="err === '' && token !== ''">
+            <strong>Success!</strong><br />
+            If you're not automatically redirected click: <a href="/entries/index" class="alert-link">here</a>.
+        </div>
+    </div>
+  </div>
+</div>

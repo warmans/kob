@@ -38,10 +38,15 @@ run-server:
 run-services: 
 	cd dev; POSTGRES_USER=$(DEV_DB_USER) POSTGRES_PASSWORD=$(DEV_DB_PASS) docker-compose up
 
-.PHONT: migrate-up
+.PHONY: migrate-up
 migrate-up: 
 	goose -dir migrations postgres $(DEV_DB_DSN) up
 
-.PHONT: migrate-down
+.PHONY: migrate-down
 migrate-down: 
 	goose -dir migrations postgres $(DEV_DB_DSN) down
+
+.PHONY: generate_private_key
+generate_private_key: 
+	@mkdir -p keys
+	@ssh-keygen -t rsa -b 4096 -f keys/jwtRS256.key

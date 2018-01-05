@@ -4,6 +4,9 @@ import "context"
 import "github.com/warmans/kob/server/pkg/rpc"
 import "github.com/golang/protobuf/ptypes/empty"
 import "github.com/warmans/kob/server/pkg/db"
+import "github.com/warmans/kob/server/pkg/auth/token"
+import "google.golang.org/grpc/status"
+import "google.golang.org/grpc/codes"
 
 func NewKobService(store *db.Store) *KobService {
 	return &KobService{store: store}
@@ -30,7 +33,10 @@ func (s *KobService) GetEntry(ctx context.Context, req *rpc.GetEntryRequest) (en
 }
 
 func (s *KobService) CreateEntry(ctx context.Context, req *rpc.CreateEntryRequest) (entry *rpc.Entry, err error) {
-	req.AuthorId = 1; //todo: from token
+	author := token.ExtractAuthor(ctx)
+	//author is always the logged in user
+	req.AuthorId = author.Id
+
 	err = s.store.WithSession(func(s *db.Session) error {
 		entry, err = s.CreateEntry(req)
 		return err
@@ -65,4 +71,12 @@ func (s *KobService) CreateAuthURL(context.Context, *empty.Empty) (*rpc.AuthURL,
 
 func (s *KobService) ListActivity(context.Context, *empty.Empty) (*rpc.ActivityList, error) {
 	return nil, nil
+}
+
+func (s *KobService) GetMe(ctx context.Context, req *empty.Empty) (*rpc.Author, error) {
+	author := token.ExtractAuthor(ctx)
+	if author == nil {
+		return nil, status.Error(codes.Internal, "invalid session data")
+	}
+	return author, nil
 }

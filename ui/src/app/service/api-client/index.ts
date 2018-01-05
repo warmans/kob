@@ -206,6 +206,17 @@ export class ApiClientService {
     return this.sendRequest<rpcEntry>('put', uri, headers, params, JSON.stringify(body));
   }
 
+  /**
+  * Method GetMe
+  * @return Full HTTP response as Observable
+  */
+  public GetMe(): Observable<HttpResponse<rpcAuthor>> {
+    let uri = `/api/v1/me`;
+    let headers = new HttpHeaders();
+    let params = new HttpParams();
+    return this.sendRequest<rpcAuthor>('get', uri, headers, params, null);
+  }
+
   private sendRequest<T>(method: string, uri: string, headers: HttpHeaders, params: HttpParams, body: any): Observable<HttpResponse<T>> {
     if (method === 'get') {
       return this.http.get<T>(this.domain + uri, { headers: headers.set('Accept', 'application/json'), params: params, observe: 'response' });

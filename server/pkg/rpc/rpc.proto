@@ -70,6 +70,12 @@ service KobService {
             get: "/api/v1/activity"
         };
     }
+
+    rpc GetMe(google.protobuf.Empty) returns (Author) {
+        option (google.api.http) = {
+            get: "/api/v1/me"
+        };
+    }
 }
 
 message ListEntriesRequest {

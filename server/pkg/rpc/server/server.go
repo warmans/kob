@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/warmans/kob/server/pkg/auth/token"
 	"fmt"
 	"net"
 
@@ -12,20 +13,23 @@ import (
 	"github.com/warmans/kob/server/pkg/rpc/server/service"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 )
 
-func NewRPCServer(logger *zap.Logger, store *db.Store) *Server {
-
+func NewRPCServer(logger *zap.Logger, store *db.Store, tokenStrategy token.Strategy) *Server {
+	
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 			grpc_prometheus.StreamServerInterceptor,
 			grpc_zap.StreamServerInterceptor(logger),
 			//grpc_recovery.StreamServerInterceptor(),
+			grpc_auth.StreamServerInterceptor(token.AuthFunc(tokenStrategy)),
 		)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_prometheus.UnaryServerInterceptor,
 			grpc_zap.UnaryServerInterceptor(logger),
 			//grpc_recovery.UnaryServerInterceptor(),
+			grpc_auth.UnaryServerInterceptor(token.AuthFunc(tokenStrategy)),
 		)),
 	)
 
