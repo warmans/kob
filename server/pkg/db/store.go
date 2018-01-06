@@ -6,22 +6,24 @@ import "database/sql"
 import "github.com/pkg/errors"
 import sq "github.com/Masterminds/squirrel"
 import "time"
+import "github.com/warmans/kob/server/pkg/search"
 
 type Scannable interface {
 	Scan(dest ...interface{}) error
 }
 
-func NewStore(conn *dbr.Connection) *Store {
-	return &Store{conn: conn}
+func NewStore(conn *dbr.Connection, index *search.Index) *Store {
+	return &Store{conn: conn, index: index}
 }
 
 type Store struct {
-	conn *dbr.Connection
+	conn  *dbr.Connection
+	index *search.Index
 }
 
 func (s *Store) Session() (*Session, error) {
 	tx, err := s.conn.NewSession(nil).Begin()
-	return &Session{tx: tx}, err
+	return &Session{tx: tx, index: s.index}, err
 }
 
 func (s *Store) WithSession(f func(*Session) error) error {
@@ -40,6 +42,7 @@ func (s *Store) WithSession(f func(*Session) error) error {
 
 type Session struct {
 	tx *dbr.Tx
+	index *search.Index
 }
 
 func (s *Session) Commit() error {
@@ -67,7 +70,14 @@ func (s *Session) CreateEntry(entry *rpc.CreateEntryRequest) (*rpc.Entry, error)
 			return nil, errors.Wrap(err, "failed to link tag "+t)
 		}
 	}
-	return s.GetEntry(id)
+	storedEntry, err := s.GetEntry(id)
+	if err != nil {
+		if err := s.index.IndexEntry(storedEntry); err != nil {
+			return nil, errors.Wrap(err, "indexing failed")
+		}
+	}
+	return storedEntry, err
+
 }
 
 func (s *Session) UpdateEntry(entry *rpc.UpdateEntryRequest) (*rpc.Entry, error) {
@@ -88,7 +98,13 @@ func (s *Session) UpdateEntry(entry *rpc.UpdateEntryRequest) (*rpc.Entry, error)
 			return nil, errors.Wrap(err, "failed to link tag "+t)
 		}
 	}
-	return s.GetEntry(entry.Id)
+	updatedEntry, err := s.GetEntry(entry.Id)
+	if err != nil {
+		if err := s.index.IndexEntry(updatedEntry); err != nil {
+			return nil, errors.Wrap(err, "indexing failed")
+		}
+	}
+	return updatedEntry, err
 }
 
 func (s *Session) GetEntry(id int64) (*rpc.Entry, error) {
@@ -103,14 +119,14 @@ func (s *Session) GetEntry(id int64) (*rpc.Entry, error) {
 }
 
 func (s *Session) ListEntries(req *rpc.ListEntriesRequest) (*rpc.EntryList, error) {
-	
+
 	var err error
 	entryList := &rpc.EntryList{}
 
 	if req.NumPerPage == 0 {
 		req.NumPerPage = 50
 	}
-	entryList.NumResults, err = s.entryCount(/*todo: where */)
+	entryList.NumResults, err = s.entryCount( /*todo: where */ )
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +134,7 @@ func (s *Session) ListEntries(req *rpc.ListEntriesRequest) (*rpc.EntryList, erro
 		return entryList, nil //if the count is 0 skip main query
 	}
 
-	entryList.Entries, err =  s.entries(uint64(req.NumPerPage), uint64(req.NumPerPage*req.Page) /*todo: where */)
+	entryList.Entries, err = s.entries(uint64(req.NumPerPage), uint64(req.NumPerPage*req.Page) /*todo: where */)
 	if err != nil {
 		return nil, err
 	}
@@ -151,6 +167,26 @@ func (s *Session) UpsertAuthor(author *rpc.Author) (*rpc.Author, error) {
 	return author, nil
 }
 
+func (s *Session) Reindex() error {
+	pageNum := uint64(0)
+	pageSize := uint64(25)
+	for {
+		page, err := s.entries(pageSize, pageSize*pageNum)
+		if err != nil {
+			return errors.Wrapf(err, "indexing failed requesting page %d", pageNum)
+		}
+		if len(page) == 0 {
+			return nil
+		}
+		for _, entry := range page {
+			if err := s.index.IndexEntry(entry); err != nil {
+				return errors.Wrapf(err, "indexing failed at page %d entry %d", pageNum, entry.Id)
+			}
+		}
+		pageNum++
+	}
+}
+
 func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) ([]*rpc.Entry, error) {
 
 	q := sq.Select(
@@ -170,10 +206,10 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) ([]*
 		"a.email_verified",
 		"a.gender",
 	).
-	From("entry e").
-	LeftJoin("author a ON e.author_id = a.id").
-	Limit(limit).
-	Offset(offset)
+		From("entry e").
+		LeftJoin("author a ON e.author_id = a.id").
+		Limit(limit).
+		Offset(offset)
 
 	for _, c := range where {
 		q.Where(c)
@@ -188,8 +224,7 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) ([]*
 	if err != nil {
 		return nil, err
 	}
-	defer res.Close()
-	
+
 	entries := make([]*rpc.Entry, 0)
 	for res.Next() {
 		entry := &rpc.Entry{
@@ -212,16 +247,22 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) ([]*
 			&entry.Author.EmailVerified,
 			&entry.Author.Gender,
 		); err != nil {
-			return nil, err
-		}
-
-		//populate the tags
-		entry.Tags, err = s.tags(sq.Expr("et.entry_id=?", entry.Id))
-		if err != nil {
+			res.Close()
 			return nil, err
 		}
 		entries = append(entries, entry)
 	}
+	if err := res.Close(); err != nil {
+		return nil, err
+	}
+
+	//finally add tags to entries
+	for _, entry := range entries {
+		if entry.Tags, err = s.tags(sq.Expr("et.entry_id=?", entry.Id)); err != nil {
+			return nil, err
+		}
+	}
+
 	return entries, nil
 }
 

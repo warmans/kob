@@ -15,6 +15,8 @@ import {
   rpcEntry,
   rpcEntryList,
   rpcJWT,
+  rpcSearchResult,
+  rpcSearchResultList,
   rpcTag,
   rpcUpdateEntryCommentRequest,
   rpcUpdateEntryRequest
@@ -111,10 +113,9 @@ export class ApiClientService {
   * Method ListEntries
   * @param page 
   * @param num_per_page 
-  * @param keyword 
   * @return Full HTTP response as Observable
   */
-  public ListEntries(page: string, num_per_page: string, keyword: string): Observable<HttpResponse<rpcEntryList>> {
+  public ListEntries(page: string, num_per_page: string): Observable<HttpResponse<rpcEntryList>> {
     let uri = `/api/v1/entry`;
     let headers = new HttpHeaders();
     let params = new HttpParams();
@@ -123,9 +124,6 @@ export class ApiClientService {
     }
     if (num_per_page !== undefined && num_per_page !== null) {
       params = params.set('num_per_page', num_per_page + '');
-    }
-    if (keyword !== undefined && keyword !== null) {
-      params = params.set('keyword', keyword + '');
     }
     return this.sendRequest<rpcEntryList>('get', uri, headers, params, null);
   }
@@ -215,6 +213,21 @@ export class ApiClientService {
     let headers = new HttpHeaders();
     let params = new HttpParams();
     return this.sendRequest<rpcAuthor>('get', uri, headers, params, null);
+  }
+
+  /**
+  * Method Search
+  * @param query 
+  * @return Full HTTP response as Observable
+  */
+  public Search(query: string): Observable<HttpResponse<rpcSearchResultList>> {
+    let uri = `/api/v1/search`;
+    let headers = new HttpHeaders();
+    let params = new HttpParams();
+    if (query !== undefined && query !== null) {
+      params = params.set('query', query + '');
+    }
+    return this.sendRequest<rpcSearchResultList>('get', uri, headers, params, null);
   }
 
   private sendRequest<T>(method: string, uri: string, headers: HttpHeaders, params: HttpParams, body: any): Observable<HttpResponse<T>> {

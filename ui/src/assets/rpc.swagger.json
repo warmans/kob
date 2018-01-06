@@ -152,12 +152,6 @@
             "required": false,
             "type": "string",
             "format": "int64"
-          },
-          {
-            "name": "keyword",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -348,6 +342,30 @@
             }
           }
         },
+        "tags": [
+          "KobService"
+        ]
+      }
+    },
+    "/api/v1/search": {
+      "get": {
+        "operationId": "Search",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/rpcSearchResultList"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "tags": [
           "KobService"
         ]
@@ -560,6 +578,40 @@
       "properties": {
         "code": {
           "type": "string"
+        }
+      }
+    },
+    "rpcSearchResult": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number",
+          "format": "float"
+        },
+        "id": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "string"
+        }
+      }
+    },
+    "rpcSearchResultList": {
+      "type": "object",
+      "properties": {
+        "num_results": {
+          "type": "string",
+          "format": "int64"
+        },
+        "max_score": {
+          "type": "number",
+          "format": "float"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rpcSearchResult"
+          }
         }
       }
     },

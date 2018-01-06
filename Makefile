@@ -48,5 +48,5 @@ migrate-down:
 
 .PHONY: generate_private_key
 generate_private_key: 
-	@mkdir -p keys
-	@ssh-keygen -t rsa -b 4096 -f keys/jwtRS256.key
+	@mkdir -p var/keys
+	@ssh-keygen -t rsa -b 4096 -f var/keys/jwtRS256.key

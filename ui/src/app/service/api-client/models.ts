@@ -10,6 +10,8 @@ export { rpcCreateEntryRequest } from './models/rpccreateentryrequest.model';
 export { rpcEntry } from './models/rpcentry.model';
 export { rpcEntryList } from './models/rpcentrylist.model';
 export { rpcJWT } from './models/rpcjwt.model';
+export { rpcSearchResult } from './models/rpcsearchresult.model';
+export { rpcSearchResultList } from './models/rpcsearchresultlist.model';
 export { rpcTag } from './models/rpctag.model';
 export { rpcUpdateEntryCommentRequest } from './models/rpcupdateentrycommentrequest.model';
 export { rpcUpdateEntryRequest } from './models/rpcupdateentryrequest.model';

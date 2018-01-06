@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { rpcEntryList } from '../../../service/api-client/models/rpcentrylist.model';
+import { ApiClientService } from '../../../service/api-client/index';
 
 @Component({
   selector: 'app-entries-index',
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EntriesIndexComponent implements OnInit {
 
-  constructor() { }
+  public entryList: rpcEntryList = <rpcEntryList>{};
+
+  constructor(private apiClient: ApiClientService) { }
 
   ngOnInit() {
+    this.apiClient.ListEntries('0', '25').subscribe(
+      (data) => {
+        this.entryList = data.body;
+        console.log(data);
+      },
+      (err) => {
+        console.log(err); //todo: message service
+      }
+    );
   }
-
 }

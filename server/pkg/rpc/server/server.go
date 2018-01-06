@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/warmans/kob/server/pkg/search"
 	"github.com/warmans/kob/server/pkg/auth/token"
 	"fmt"
 	"net"
@@ -16,7 +17,12 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 )
 
-func NewRPCServer(logger *zap.Logger, store *db.Store, tokenStrategy token.Strategy) *Server {
+func NewRPCServer(
+	logger *zap.Logger, 
+	store *db.Store, 
+	tokenStrategy token.Strategy,
+	index *search.Index,
+) *Server {
 	
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
@@ -35,7 +41,7 @@ func NewRPCServer(logger *zap.Logger, store *db.Store, tokenStrategy token.Strat
 
 	grpc_prometheus.Register(grpcServer)
 
-	rpc.RegisterKobServiceServer(grpcServer, service.NewKobService(store))
+	rpc.RegisterKobServiceServer(grpcServer, service.NewKobService(store, index))
 	return &Server{srv: grpcServer}
 }
 

@@ -7,13 +7,17 @@ import "github.com/warmans/kob/server/pkg/db"
 import "github.com/warmans/kob/server/pkg/auth/token"
 import "google.golang.org/grpc/status"
 import "google.golang.org/grpc/codes"
+import "github.com/warmans/kob/server/pkg/search"
+import "github.com/blevesearch/bleve"
+import "fmt"
 
-func NewKobService(store *db.Store) *KobService {
-	return &KobService{store: store}
+func NewKobService(store *db.Store, index *search.Index) *KobService {
+	return &KobService{store: store, index: index}
 }
 
 type KobService struct {
 	store *db.Store
+	index *search.Index
 }
 
 func (s *KobService) ListEntries(ctx context.Context, req *rpc.ListEntriesRequest) (entries *rpc.EntryList, err error) {
@@ -79,4 +83,38 @@ func (s *KobService) GetMe(ctx context.Context, req *empty.Empty) (*rpc.Author, 
 		return nil, status.Error(codes.Internal, "invalid session data")
 	}
 	return author, nil
+}
+
+func (s *KobService) Search(ctx context.Context, req *rpc.SearchRequest) (*rpc.SearchResultList, error) {
+
+	query := bleve.NewQueryStringQuery(req.Query)
+
+	searchRequest := bleve.NewSearchRequest(query)
+	searchRequest.Highlight = bleve.NewHighlightWithStyle("html")
+
+	result, err := s.index.Search(searchRequest)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	fmt.Println(result)
+
+	results := []*rpc.SearchResult{}
+	for _, res := range result.Hits {
+
+		results = append(
+			results,
+			&rpc.SearchResult{
+				Score:   float32(res.Score),
+				Id:      res.ID,
+				Preview: search.MakePreview(res),
+			},
+		)
+	}
+
+	return &rpc.SearchResultList{
+		NumResults: int64(result.Total),
+		MaxScore:   float32(result.MaxScore),
+		Results:    results,
+	}, nil
 }

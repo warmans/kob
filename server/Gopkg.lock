@@ -20,6 +20,59 @@
   revision = "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9"
 
 [[projects]]
+  name = "github.com/blevesearch/bleve"
+  packages = [
+    ".",
+    "analysis",
+    "analysis/analyzers/standard_analyzer",
+    "analysis/datetime_parsers/datetime_optional",
+    "analysis/datetime_parsers/flexible_go",
+    "analysis/language/en",
+    "analysis/token_filters/lower_case_filter",
+    "analysis/token_filters/porter",
+    "analysis/token_filters/stop_tokens_filter",
+    "analysis/tokenizers/unicode",
+    "document",
+    "index",
+    "index/store",
+    "index/store/boltdb",
+    "index/store/gtreap",
+    "index/upside_down",
+    "numeric_util",
+    "registry",
+    "search",
+    "search/collectors",
+    "search/facets",
+    "search/highlight",
+    "search/highlight/fragment_formatters/html",
+    "search/highlight/fragmenters/simple",
+    "search/highlight/highlighters/html",
+    "search/highlight/highlighters/simple",
+    "search/scorers",
+    "search/searchers"
+  ]
+  revision = "97393d027342f43b17da2f02c090a4e728ac929f"
+  version = "v0.5.0"
+
+[[projects]]
+  name = "github.com/blevesearch/go-porterstemmer"
+  packages = ["."]
+  revision = "b4dd94e38f29620fe0f97ae4b0f6994b0d5d75f0"
+  version = "v1.0.1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/blevesearch/segment"
+  packages = ["."]
+  revision = "762005e7a34fd909a84586299f1dd457371d36ee"
+
+[[projects]]
+  name = "github.com/boltdb/bolt"
+  packages = ["."]
+  revision = "2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8"
+  version = "v1.3.1"
+
+[[projects]]
   name = "github.com/dgrijalva/jwt-go"
   packages = ["."]
   revision = "dbeaa9332f19a944acb5736b4456cfcc02140e29"
@@ -55,10 +108,12 @@
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
   packages = [
     ".",
+    "auth",
     "logging",
     "logging/zap",
     "tags",
-    "tags/zap"
+    "tags/zap",
+    "util/metautils"
   ]
   revision = "967bee733a734780623ac3d7c8e9216e4372ea62"
 
@@ -152,6 +207,12 @@
   revision = "8f918ac9ab4be3a790338bda8624fec5d71260b3"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/steveyen/gtreap"
+  packages = ["."]
+  revision = "0abe01ef9be25c4aedc174758ec2d917314d6d70"
+
+[[projects]]
   name = "go.uber.org/atomic"
   packages = ["."]
   revision = "8474b86a5a6f79c443ce4b2992817ff32cf208b8"
@@ -202,6 +263,12 @@
     "jwt"
   ]
   revision = "197281d4e0ecd78c33865daf9c6e51626feefcb2"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "dd9ec17814d5b1de388ebe438ec013d57d8b3779"
 
 [[projects]]
   branch = "master"
@@ -281,6 +348,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "faf84968a840bf7a9ebe161f65b4922ae5de7417840477bfa4a8def74456a421"
+  inputs-digest = "ad74dfd6cc1e07cc31057378afdd8fbe3a2352f6bcd26b33546b2921994b7cb8"
   solver-name = "gps-cdcl"
   solver-version = 1
