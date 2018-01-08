@@ -21,6 +21,7 @@ import (
 	"github.com/warmans/kob/server/pkg/rpc/server"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"github.com/warmans/kob/server/pkg/bot"
 )
 
 var (
@@ -37,6 +38,8 @@ var (
 	googleCreds     = flag.String("google-creds", "google-creds.json", "Google auth credentials")
 	tokenKeyPath    = flag.String("token-key-path", "var/keys/jwtRS256.key", "Private RS256 RSA key used to create and validate tokens")
 	searchIndexPath = flag.String("search-index-path", "var/entries.bleve", "Private RS256 RSA key used to create and validate tokens")
+	slackToken = flag.String("slack-token", "", "Token used for slackbot integration")
+	slackEnabled = flag.Bool("slack-enabled", false, "Enabled slack integration")
 )
 
 func main() {
@@ -54,7 +57,17 @@ func main() {
 	// oauth handlers and verification strategy required by middlewares.
 	oauthHandler, tokenStrategy := makeOauth(logger, store)
 
-
+	// slackbot monitors slack for messages and suggests content
+	if *slackEnabled {
+		slackBot := makeSlackBot(logger, store, searchIndex)
+		go func() {
+			logger.Info("starting slack bot...")
+			if err := slackBot.Run(); err != nil {
+				logger.Error("slack bot failed", zap.Error(err))
+				return
+			}
+		}()
+	}
 
 	// start servers
 	go serveGRPC(logger, store, tokenStrategy, searchIndex)
@@ -144,4 +157,8 @@ func makeSearchIndex(logger *zap.Logger) *search.Index {
 		logger.Fatal("Failed to create search index", zap.Error(err))
 	}	
 	return searchIndex
+}
+
+func makeSlackBot(logger *zap.Logger, store *db.Store, index *search.Index) *bot.SlackBot {
+	return bot.NewSlackBot(*slackToken, logger, store, index)
 }

@@ -26,6 +26,10 @@ build-server:
 	GOOS=linux \
 	go build -ldflags "-X github.com/warmans/kob/cmd/kob-server/main.Version=$(PROJECT_VERSION)" -o build/bin/kob-server ./server/cmd/kob-server
 
+.PHONY: run
+run:
+	@$(MAKE) -j3 run-ui run-server run-services
+
 .PHONY: run-ui
 run-ui:
 	cd ui; node_modules/.bin/ng serve -pc proxy.dev.conf.json
@@ -47,6 +51,10 @@ migrate-down:
 	goose -dir migrations postgres $(DEV_DB_DSN) down
 
 .PHONY: generate_private_key
-generate_private_key: 
+generate-private-key:
 	@mkdir -p var/keys
 	@ssh-keygen -t rsa -b 4096 -f var/keys/jwtRS256.key
+
+.PHONY: dev-dsn
+dev-dsn:
+	@echo $(DEV_DB_DSN)

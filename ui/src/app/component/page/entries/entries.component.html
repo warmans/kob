@@ -14,10 +14,10 @@
     <div class="row">
       <div class="col-xl-12 pt-3 px-3">
         <form class="pb-3">
-          <div class="input-group input-group-lg">
+          <div class="input-group">
             <input class="form-control" id="search" aria-describedby="searchHelp" placeholder="Terms...">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button">Search</button>
+            <span class="input-group-append">
+              <button class="btn btn-outline-success" type="button">Search</button>
             </span>
           </div>
         </form>
@@ -31,7 +31,7 @@
               <a class="nav-link" href="#" [routerLink]="['/entries', 'index']" [routerLinkActive]="['active']">
                 <i class="fa fa-align-justify"></i> Article Index</a>
             </li>
-            
+
             <li class="nav-item ml-auto">
               <a class="nav-link mr-0" href="/entry/new" [routerLink]="['/entries', 'new']" [routerLinkActive]="['active']">
                 <i class="fas fa-pencil-alt"></i> New Article

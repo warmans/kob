@@ -71,7 +71,7 @@ func (s *Session) CreateEntry(entry *rpc.CreateEntryRequest) (*rpc.Entry, error)
 		}
 	}
 	storedEntry, err := s.GetEntry(id)
-	if err != nil {
+	if err == nil {
 		if err := s.index.IndexEntry(storedEntry); err != nil {
 			return nil, errors.Wrap(err, "indexing failed")
 		}
@@ -99,7 +99,7 @@ func (s *Session) UpdateEntry(entry *rpc.UpdateEntryRequest) (*rpc.Entry, error)
 		}
 	}
 	updatedEntry, err := s.GetEntry(entry.Id)
-	if err != nil {
+	if err == nil {
 		if err := s.index.IndexEntry(updatedEntry); err != nil {
 			return nil, errors.Wrap(err, "indexing failed")
 		}

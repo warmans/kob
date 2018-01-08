@@ -36,6 +36,7 @@ type Index struct {
 }
 
 func (i *Index) IndexEntry(entry *rpc.Entry) error {
+	fmt.Println("INDEXING !")
 	return i.index.Index(fmt.Sprintf("%d", entry.Id), entry)
 }
 

@@ -21,36 +21,7 @@
 
 [[projects]]
   name = "github.com/blevesearch/bleve"
-  packages = [
-    ".",
-    "analysis",
-    "analysis/analyzers/standard_analyzer",
-    "analysis/datetime_parsers/datetime_optional",
-    "analysis/datetime_parsers/flexible_go",
-    "analysis/language/en",
-    "analysis/token_filters/lower_case_filter",
-    "analysis/token_filters/porter",
-    "analysis/token_filters/stop_tokens_filter",
-    "analysis/tokenizers/unicode",
-    "document",
-    "index",
-    "index/store",
-    "index/store/boltdb",
-    "index/store/gtreap",
-    "index/upside_down",
-    "numeric_util",
-    "registry",
-    "search",
-    "search/collectors",
-    "search/facets",
-    "search/highlight",
-    "search/highlight/fragment_formatters/html",
-    "search/highlight/fragmenters/simple",
-    "search/highlight/highlighters/html",
-    "search/highlight/highlighters/simple",
-    "search/scorers",
-    "search/searchers"
-  ]
+  packages = [".","analysis","analysis/analyzers/standard_analyzer","analysis/datetime_parsers/datetime_optional","analysis/datetime_parsers/flexible_go","analysis/language/en","analysis/token_filters/lower_case_filter","analysis/token_filters/porter","analysis/token_filters/stop_tokens_filter","analysis/tokenizers/unicode","document","index","index/store","index/store/boltdb","index/store/gtreap","index/upside_down","numeric_util","registry","search","search/collectors","search/facets","search/highlight","search/highlight/fragment_formatters/html","search/highlight/fragmenters/simple","search/highlight/highlighters/html","search/highlight/highlighters/simple","search/scorers","search/searchers"]
   revision = "97393d027342f43b17da2f02c090a4e728ac929f"
   version = "v0.5.0"
 
@@ -80,41 +51,20 @@
 
 [[projects]]
   name = "github.com/gocraft/dbr"
-  packages = [
-    ".",
-    "dialect"
-  ]
+  packages = [".","dialect"]
   revision = "b2f0ffcef2a64c0729d5818e103bc019caed7b22"
   version = "v2.1"
 
 [[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
-  packages = [
-    "jsonpb",
-    "proto",
-    "protoc-gen-go/descriptor",
-    "ptypes",
-    "ptypes/any",
-    "ptypes/duration",
-    "ptypes/empty",
-    "ptypes/struct",
-    "ptypes/timestamp"
-  ]
+  packages = ["jsonpb","proto","protoc-gen-go/descriptor","ptypes","ptypes/any","ptypes/duration","ptypes/empty","ptypes/struct","ptypes/timestamp"]
   revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
 
 [[projects]]
   branch = "master"
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
-  packages = [
-    ".",
-    "auth",
-    "logging",
-    "logging/zap",
-    "tags",
-    "tags/zap",
-    "util/metautils"
-  ]
+  packages = [".","auth","logging","logging/zap","tags","tags/zap","util/metautils"]
   revision = "967bee733a734780623ac3d7c8e9216e4372ea62"
 
 [[projects]]
@@ -125,11 +75,7 @@
 
 [[projects]]
   name = "github.com/grpc-ecosystem/grpc-gateway"
-  packages = [
-    "runtime",
-    "runtime/internal",
-    "utilities"
-  ]
+  packages = ["runtime","runtime/internal","utilities"]
   revision = "8cc3a55af3bcf171a1c23a90c4df9cf591706104"
   version = "v1.3.0"
 
@@ -148,10 +94,7 @@
 [[projects]]
   branch = "master"
   name = "github.com/lib/pq"
-  packages = [
-    ".",
-    "oid"
-  ]
+  packages = [".","oid"]
   revision = "83612a56d3dd153a94a629cd64925371c9adad78"
 
 [[projects]]
@@ -159,6 +102,12 @@
   packages = ["pbutil"]
   revision = "3247c84500bff8d9fb6d579d800f20b3e091582c"
   version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/nlopes/slack"
+  packages = ["."]
+  revision = "c86337c0ef2486a15edd804355d9c73d2f2caed1"
+  version = "v0.1.0"
 
 [[projects]]
   name = "github.com/patrickmn/go-cache"
@@ -174,10 +123,7 @@
 
 [[projects]]
   name = "github.com/prometheus/client_golang"
-  packages = [
-    "prometheus",
-    "prometheus/promhttp"
-  ]
+  packages = ["prometheus","prometheus/promhttp"]
   revision = "c5b7fccd204277076155f10851dad72b76a49317"
   version = "v0.8.0"
 
@@ -190,20 +136,13 @@
 [[projects]]
   branch = "master"
   name = "github.com/prometheus/common"
-  packages = [
-    "expfmt",
-    "internal/bitbucket.org/ww/goautoneg",
-    "model"
-  ]
+  packages = ["expfmt","internal/bitbucket.org/ww/goautoneg","model"]
   revision = "2e54d0b93cba2fd133edc32211dcc32c06ef72ca"
 
 [[projects]]
   branch = "master"
   name = "github.com/prometheus/procfs"
-  packages = [
-    ".",
-    "xfs"
-  ]
+  packages = [".","xfs"]
   revision = "8f918ac9ab4be3a790338bda8624fec5d71260b3"
 
 [[projects]]
@@ -226,42 +165,20 @@
 
 [[projects]]
   name = "go.uber.org/zap"
-  packages = [
-    ".",
-    "buffer",
-    "internal/bufferpool",
-    "internal/color",
-    "internal/exit",
-    "zapcore"
-  ]
+  packages = [".","buffer","internal/bufferpool","internal/color","internal/exit","zapcore"]
   revision = "35aad584952c3e7020db7b839f6b102de6271f89"
   version = "v1.7.1"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
-  packages = [
-    "context",
-    "context/ctxhttp",
-    "http2",
-    "http2/hpack",
-    "idna",
-    "internal/timeseries",
-    "lex/httplex",
-    "trace"
-  ]
+  packages = ["context","context/ctxhttp","http2","http2/hpack","idna","internal/timeseries","lex/httplex","trace","websocket"]
   revision = "d866cfc389cec985d6fda2859936a575a55a3ab6"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/oauth2"
-  packages = [
-    ".",
-    "google",
-    "internal",
-    "jws",
-    "jwt"
-  ]
+  packages = [".","google","internal","jws","jwt"]
   revision = "197281d4e0ecd78c33865daf9c6e51626feefcb2"
 
 [[projects]]
@@ -273,81 +190,30 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
-  packages = [
-    "collate",
-    "collate/build",
-    "internal/colltab",
-    "internal/gen",
-    "internal/tag",
-    "internal/triegen",
-    "internal/ucd",
-    "language",
-    "secure/bidirule",
-    "transform",
-    "unicode/bidi",
-    "unicode/cldr",
-    "unicode/norm",
-    "unicode/rangetable"
-  ]
+  packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
   revision = "eb22672bea55af56d225d4e35405f4d2e9f062a0"
 
 [[projects]]
   name = "google.golang.org/appengine"
-  packages = [
-    ".",
-    "internal",
-    "internal/app_identity",
-    "internal/base",
-    "internal/datastore",
-    "internal/log",
-    "internal/modules",
-    "internal/remote_api",
-    "internal/urlfetch",
-    "urlfetch"
-  ]
+  packages = [".","internal","internal/app_identity","internal/base","internal/datastore","internal/log","internal/modules","internal/remote_api","internal/urlfetch","urlfetch"]
   revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
   version = "v1.0.0"
 
 [[projects]]
   branch = "master"
   name = "google.golang.org/genproto"
-  packages = [
-    "googleapis/api/annotations",
-    "googleapis/rpc/status"
-  ]
+  packages = ["googleapis/api/annotations","googleapis/rpc/status"]
   revision = "a8101f21cf983e773d0c1133ebc5424792003214"
 
 [[projects]]
   name = "google.golang.org/grpc"
-  packages = [
-    ".",
-    "balancer",
-    "balancer/roundrobin",
-    "codes",
-    "connectivity",
-    "credentials",
-    "encoding",
-    "grpclb/grpc_lb_v1/messages",
-    "grpclog",
-    "internal",
-    "keepalive",
-    "metadata",
-    "naming",
-    "peer",
-    "resolver",
-    "resolver/dns",
-    "resolver/passthrough",
-    "stats",
-    "status",
-    "tap",
-    "transport"
-  ]
+  packages = [".","balancer","balancer/roundrobin","codes","connectivity","credentials","encoding","grpclb/grpc_lb_v1/messages","grpclog","internal","keepalive","metadata","naming","peer","resolver","resolver/dns","resolver/passthrough","stats","status","tap","transport"]
   revision = "e687fa4e6424368ece6e4fe727cea2c806a0fcb4"
   version = "v1.8.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ad74dfd6cc1e07cc31057378afdd8fbe3a2352f6bcd26b33546b2921994b7cb8"
+  inputs-digest = "2dc1ed537d59286259a120d07e3b99223023b14a699407a24d6b758c5fe1f8d6"
   solver-name = "gps-cdcl"
   solver-version = 1
