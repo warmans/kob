@@ -108,7 +108,7 @@ func (s *Session) UpdateEntry(entry *rpc.UpdateEntryRequest) (*rpc.Entry, error)
 }
 
 func (s *Session) GetEntry(id int64) (*rpc.Entry, error) {
-	entries, err := s.entries(1, 0, sq.Expr("e.id = ?", id))
+	entries, err := s.entries(1, 0, sq.Expr("e.id = $1", id))
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +212,7 @@ func (s *Session) entries(limit uint64, offset uint64, where ...sq.Sqlizer) ([]*
 		Offset(offset)
 
 	for _, c := range where {
-		q.Where(c)
+		q = q.Where(c)
 	}
 
 	sql, args, err := q.ToSql()

@@ -1,4 +1,9 @@
-<div *ngFor="let entry of entryList.entries">
-    <strong>{{entry.title}}</strong>
-    <p>{{entry.content}}</p>
+<div *ngFor="let entry of entryList.entries" class="entry mb-3">
+    <div class="header">
+      <strong><a routerLink="/entries/view/{{entry.id}}">{{entry.title}}</a></strong>
+      <div class="sub">
+        by {{entry.author.name}} (updated {{entry.updated_date | date:"fullDate"}})
+      </div>
+    </div>
+    <markdown>{{entry.content}}</markdown>
 </div>

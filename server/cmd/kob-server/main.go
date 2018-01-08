@@ -34,6 +34,7 @@ var (
 	grpcPort        = flag.Int("grcp-port", 9090, "port to bind gRPC server")
 	webRoot         = flag.String("web-root", "build/dist", "path to public dir")
 	dbDSN           = flag.String("db-dsn", "", "DSN of postgres DB")
+	dbQueryLog           = flag.Bool("db-query-log-enabled", false, "Log queries to postgres log")
 	host            = flag.String("host", "http://localhost:4200", "host of service inc. scheme. Used for oauth redirects")
 	googleCreds     = flag.String("google-creds", "google-creds.json", "Google auth credentials")
 	tokenKeyPath    = flag.String("token-key-path", "var/keys/jwtRS256.key", "Private RS256 RSA key used to create and validate tokens")
@@ -49,17 +50,17 @@ func main() {
 	defer logger.Sync()
 
 	// search index handles full text searching via bleve.
-	searchIndex := makeSearchIndex(logger)
+	searchIndex := makeSearchIndex(logger.With(zap.String("comp", "index")))
 
 	// store handles permanent storeage of entities.
-	store := makeStore(logger, searchIndex)
+	store := makeStore(logger.With(zap.String("comp", "store")), searchIndex)
 
 	// oauth handlers and verification strategy required by middlewares.
-	oauthHandler, tokenStrategy := makeOauth(logger, store)
+	oauthHandler, tokenStrategy := makeOauth(logger.With(zap.String("comp", "oauth")), store)
 
 	// slackbot monitors slack for messages and suggests content
 	if *slackEnabled {
-		slackBot := makeSlackBot(logger, store, searchIndex)
+		slackBot := makeSlackBot(logger.With(zap.String("comp", "slackbot")), store, searchIndex)
 		go func() {
 			logger.Info("starting slack bot...")
 			if err := slackBot.Run(); err != nil {
@@ -70,8 +71,8 @@ func main() {
 	}
 
 	// start servers
-	go serveGRPC(logger, store, tokenStrategy, searchIndex)
-	serveHTTP(logger, oauthHandler)
+	go serveGRPC(logger.With(zap.String("comp", "grpc-server")), store, tokenStrategy, searchIndex)
+	serveHTTP(logger.With(zap.String("comp", "http-server")), oauthHandler)
 }
 
 func serveGRPC(logger *zap.Logger, store *db.Store, tokenStrategy token.Strategy, searchIndex *search.Index) {
@@ -110,6 +111,12 @@ func makeStore(logger *zap.Logger, index *search.Index) *db.Store {
 	if err != nil {
 		logger.Fatal("DB connection not possible", zap.Error(err))
 	}
+	if *dbQueryLog {
+		if _, err := conn.Exec("SET log_statement TO 'all'"); err != nil {
+			logger.Fatal("Failed to enable query logging", zap.Error(err))
+		}
+	}
+
 	store := db.NewStore(conn, index)
 
 	//always re-index documents on startup. Or maybe don't. todo: figure out if it's a bad idea.

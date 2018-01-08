@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { rpcCreateEntryRequest } from '../../../service/api-client/models/rpccreateentryrequest.model';
-import { ApiClientService } from '../../../service/api-client/index';
+import { ApiClientService } from '../../../service/api-client';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-entries-edit',
@@ -11,7 +12,7 @@ export class EntriesEditComponent implements OnInit {
 
   public entry: rpcCreateEntryRequest = <rpcCreateEntryRequest>{};
 
-  constructor(private apiClient: ApiClientService) { }
+  constructor(private apiClient: ApiClientService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -19,7 +20,7 @@ export class EntriesEditComponent implements OnInit {
   public create() {
     console.log(this.entry);
     this.apiClient.CreateEntry(this.entry).subscribe((data) => {
-      console.log(data);
+      this.router.navigateByUrl("/entries/view/"+data.body.id)
     });
   }
 

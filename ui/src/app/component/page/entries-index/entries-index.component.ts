@@ -17,10 +17,6 @@ export class EntriesIndexComponent implements OnInit {
     this.apiClient.ListEntries('0', '25').subscribe(
       (data) => {
         this.entryList = data.body;
-        console.log(data);
-      },
-      (err) => {
-        console.log(err); //todo: message service
       }
     );
   }

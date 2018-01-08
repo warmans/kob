@@ -13,6 +13,15 @@ export class StateService {
 
   pushKey(key: string, value: any) {
     this.state[key] = value;
+    this.sync();
+  }
+
+  deleteKey(key) {
+    delete(this.state[key]);
+    this.sync();
+  }
+
+  private sync() {
     localStorage.setItem('state', JSON.stringify(this.state));
     this.onStateChange.next(this.state);
   }

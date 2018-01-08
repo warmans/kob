@@ -1,0 +1,20 @@
+<div class="header">
+  <div class="feedback float-right pt-3">
+    <a class="text-success btn-xs mr-3"><i class="fa fa-thumbs-up"></i> Useful</a>
+    <a class="text-danger btn-xs"><i class="fa fa-thumbs-down"></i> Useless</a>
+  </div>
+
+  <img src="{{entry.author.picture}}" alt="" class="rounded-circle float-left author-img" style="width: 32px">
+
+  <div class="title">{{entry.title}}</div>
+  <div class="sub">
+    by {{entry.author.name}} (updated {{entry.updated_date | date:"fullDate"}})
+  </div>
+</div>
+
+<div class="content">
+  <markdown [data]="entry.content"></markdown>
+</div>
+<div class="comments">
+  <h2>Comments</h2>
+</div>

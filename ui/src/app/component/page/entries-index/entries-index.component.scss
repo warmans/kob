@@ -1,0 +1,14 @@
+@import '../../../../scss/_variables.scss';
+
+.entry {
+  .header {
+    text-transform: capitalize;
+    .sub {
+      color: #777;
+      font-size: 0.8rem;
+    }
+    padding-bottom: 10px;
+
+  }
+  border-bottom: 1px solid $default-border-color;
+}

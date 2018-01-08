@@ -28,7 +28,7 @@ build-server:
 
 .PHONY: run
 run:
-	@$(MAKE) -j3 run-ui run-server run-services
+	@$(MAKE) -j2 run-ui run-server
 
 .PHONY: run-ui
 run-ui:
@@ -36,7 +36,7 @@ run-ui:
 
 .PHONY: run-server
 run-server:
-	./build/bin/kob-server -db-dsn=$(DEV_DB_DSN)
+	./build/bin/kob-server -db-dsn=$(DEV_DB_DSN) -db-query-log-enabled=true
 
 .PHONY: run-services
 run-services: 

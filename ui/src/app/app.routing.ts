@@ -7,6 +7,7 @@ import { EntriesAcivityComponent } from './component/page/entries-acivity/entrie
 import { LoginComponent } from './component/page/login/login.component';
 import { LoginCompleteComponent } from './component/page/login-complete/login-complete.component';
 import { AuthGuard } from './guard/auth.guard';
+import {EntriesViewComponent} from "./component/page/entries-view/entries-view.component";
 
 export const appRoutes: Routes = [{
   path: '',
@@ -26,7 +27,8 @@ export const appRoutes: Routes = [{
     {path: '', redirectTo: 'activity', pathMatch: 'prefix'},
     {path: 'activity', component: EntriesAcivityComponent},
     {path: 'index', component: EntriesIndexComponent},
-    {path: 'new', component: EntriesEditComponent}
+    {path: 'new', component: EntriesEditComponent},
+    {path: 'view/:id', component: EntriesViewComponent}
   ],
 }, {
   path: '**',

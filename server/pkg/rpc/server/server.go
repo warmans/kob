@@ -29,13 +29,13 @@ func NewRPCServer(
 			grpc_prometheus.StreamServerInterceptor,
 			grpc_zap.StreamServerInterceptor(logger),
 			//grpc_recovery.StreamServerInterceptor(),
-			grpc_auth.StreamServerInterceptor(token.AuthFunc(tokenStrategy)),
+			grpc_auth.StreamServerInterceptor(token.AuthFunc(tokenStrategy, logger)),
 		)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_prometheus.UnaryServerInterceptor,
 			grpc_zap.UnaryServerInterceptor(logger),
 			//grpc_recovery.UnaryServerInterceptor(),
-			grpc_auth.UnaryServerInterceptor(token.AuthFunc(tokenStrategy)),
+			grpc_auth.UnaryServerInterceptor(token.AuthFunc(tokenStrategy, logger)),
 		)),
 	)
 

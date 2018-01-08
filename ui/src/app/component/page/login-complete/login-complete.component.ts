@@ -19,7 +19,6 @@ export class LoginCompleteComponent implements OnInit {
       this.err = params['err'];
       this.token = params['token'];
       if (this.err === '' && this.token !== '') {
-        console.log(this.token);
         this.state.pushKey('token', this.token);
         this.router.navigate(['/entries']);
       }

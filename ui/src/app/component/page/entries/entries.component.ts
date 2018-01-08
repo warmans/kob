@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StateService } from '../../../service/state/state.service';
+import { NotificationService } from '../../../service/notification/notification.service';
 
 @Component({
   selector: 'app-entries',
@@ -10,7 +11,7 @@ export class EntriesComponent implements OnInit {
 
   public claims: any;
 
-  constructor(private state: StateService) { }
+  constructor(private state: StateService, private notify: NotificationService) { }
 
   ngOnInit() {
     this.state.onStateChange.subscribe((newState) => {
